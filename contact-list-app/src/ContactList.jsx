@@ -22,6 +22,8 @@ const ContactList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [isEditing, setIsEditing] =useState(false);
+  const [currentContactId, setCurrentContactId]=useState(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -49,7 +51,23 @@ const ContactList = () => {
       contact.email.toLowerCase().includes(query)
     );
   }, [contacts, searchQuery]);
-  const showNotification = (message, type = 'success') => {
+
+  // const handleDeleteContact= (id) => {
+  //   setContacts(prevContacts => prevContacts.filter(contact =>contact.id !== id));
+  //   showNotification('Contact deleted successfully','error');
+  // }\
+
+  const handleEditClick = (contact) => {
+    setIsEditing(true);
+    setCurrentContactId(contacts.id);
+    setFormData({
+      name: contact.name,
+      email:contact.email,
+      phone:contact.phone
+    });
+    setShowAddModal(true);
+  };
+   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
   };
@@ -87,10 +105,21 @@ const ContactList = () => {
   };
 
   // Add new contact
-  const handleAddContact = async () => {
+  const handleSubmit = async () => {
     if (!validateForm()) {
       return;
     }
+
+
+    if (isEditing) {
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API lag
+    setContacts(prev => prev.map(contact => 
+      contact.id === currentContactId 
+        ? { ...contact, ...formData } // Update the contact
+        : contact
+    ));
+    showNotification('Contact updated successfully! ✨');
+  } else {
 
     const nameParts = formData.name.trim().split(' ');
     const avatar = nameParts.length > 1 
@@ -121,18 +150,22 @@ const ContactList = () => {
     setShowAddModal(false);
     setFormData({ name: '', email: '', phone: '' });
     setFormErrors({});
-    showNotification('Contact added successfully! ✨');
+    showNotification('Contact added successfully! ✨'); }
+
+    closeModal();
   };
   const closeModal = () => {
     setShowAddModal(false);
     setFormData({ name: '', email: '', phone: '' });
     setFormErrors({});
+    setIsEditing(false);
+    setCurrentContactId(null);
   };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      handleAddContact();
+      handleSubmit();
     }
   };
 
@@ -246,6 +279,13 @@ const ContactList = () => {
                 className="contact-card glass-effect"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
+              {/* <button 
+                className="btn-delete-contact" 
+                onClick={() => handleDeleteContact(contact.id)}
+                aria-label={`Delete ${contact.name}`}
+              >
+                <X size={18} />
+              </button> */}
                 <div className="contact-card-inner">
                   <div className="contact-header">
                     <div className={`contact-avatar bg-gradient-to-br ${contact.color}`}>
@@ -269,6 +309,10 @@ const ContactList = () => {
                         <span className="contact-detail-text">{contact.phone}</span>
                       </div>
                     </div>
+                    <button 
+                      className='btn-edit-contact'
+                      onClick={() => handleEditClick(contact)}
+                      > Edit </button>
                   </div>
                   <div className="card-glow"></div>
                 </div>
@@ -288,7 +332,13 @@ const ContactList = () => {
                 <div className="modal-icon">
                   <User size={24} />
                 </div>
-                <h2 className="modal-title">Add New Contact</h2>
+                <h2 className="modal-title">
+                {isEditing ? 'Edit Contact' : 'Add New Contact'}
+              </h2>
+                <button onClick={handleSubmit} className="btn btn-primary">
+                <Plus size={18} />
+                {isEditing ? 'Save Changes' : 'Add Contact'}
+                </button>
               </div>
               <button onClick={closeModal} className="btn-close">
                 <X size={24} />
@@ -357,7 +407,7 @@ const ContactList = () => {
                 <button onClick={closeModal} className="btn btn-secondary">
                   Cancel
                 </button>
-                <button onClick={handleAddContact} className="btn btn-primary">
+                <button onClick={handleSubmit} className="btn btn-primary">
                   <Plus size={18} />
                   Add Contact
                 </button>

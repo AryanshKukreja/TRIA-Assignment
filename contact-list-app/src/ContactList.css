@@ -875,3 +875,59 @@ body {
     flex-direction: column;
   }
 }
+
+.btn-delete-contact {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.btn-delete-contact:hover {
+  background: rgba(239, 68, 68, 0.8); /* red-500 */
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.btn-edit-contact {
+  /* Sizing and Spacing */
+  width: 100%; /* Make it full width of the card body */
+  padding: 10px;
+  margin-top: 16px; /* Space it from the details above */
+  
+  /* Appearance */
+  background: rgba(255, 255, 255, 0.15); /* Semi-transparent white */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px; /* Pill shape */
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+
+.btn-edit-contact:hover {
+  background: rgba(255, 255, 255, 0.25); /* Light up on hover */
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px); /* Subtle lift effect */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-edit-contact:active {
+  transform: translateY(0); /* Click effect */
+  background: rgba(255, 255, 255, 0.1);
+}
